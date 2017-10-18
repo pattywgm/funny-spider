@@ -77,9 +77,9 @@ class Top250MoviesSpider(scrapy.Spider):
         # IMDB链接
         item['imdb'] = response.urljoin(info_div.xpath('.//a[last()]/@href').extract_first())
         # 豆瓣评分
-        average = response.xpath('//strong[@property="v:average"]/text()').extract_fist()
+        average = response.xpath('//strong[@property="v:average"]/text()').extract_first()
         rating_people = {
-            response.urljoin('collections'): response.xpath('//span[@property="v:votes"]/text()').extract_fist()}
+            response.xpath('//span[@property="v:votes"]/text()').extract_first(): response.urljoin('collections')}
         star_titles = response.xpath('//div[@class="ratings-on-weight"]//span[@title]/text()').extract()
         star_titles = [t.strip() for t in star_titles if t is not None]
         star_weights = response.xpath('//div[@class="ratings-on-weight"]//span[@class="rating_per"]/text()').extract()
