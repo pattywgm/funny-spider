@@ -4,8 +4,10 @@
 #
 # See documentation in:
 # http://doc.scrapy.org/en/latest/topics/spider-middleware.html
-
+import json
 from scrapy import signals
+from scrapy.mail import MailSender
+from settings import MAIL_TO
 
 
 class DoubanSpiderMiddleware(object):
@@ -18,6 +20,8 @@ class DoubanSpiderMiddleware(object):
         # This method is used by Scrapy to create your spiders.
         s = cls()
         crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
+        crawler.signals.connect(s.spider_error, signal=signals.spider_error)
+        s.mail = MailSender.from_settings(crawler.settings)
         return s
 
     def process_spider_input(self, response, spider):
@@ -54,3 +58,21 @@ class DoubanSpiderMiddleware(object):
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+        self.mail.send(MAIL_TO, 'Scrapy Opened from wugm', 'open...')
+
+    def spider_error(self, failure, response, spider):
+        """
+        spider_error信息处理方法, 发送email报警
+        :param failure:
+        :param response:
+        :param spider:
+        :return:
+        """
+        content = {'project_name': spider.settings.attributes['BOT_NAME'].value,
+                   'spider_name': spider.name,
+                   'url': response.url,
+                   'failure_report': {'args': failure.value.args,
+                                      'message': failure.value.message},
+                   'error_from': 'Spider error, probably occurred in item parse functions'}
+        self.mail.send(MAIL_TO, 'Scrapy Error Alarm from wugm', json.dumps(content))
+

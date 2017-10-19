@@ -10,6 +10,7 @@
 import scrapy
 
 from douban.items import MovieItem
+from douban.utils.my_utils import replace_dot
 
 _META_VERSION = 'v1.0'
 _CELEBRITIES = 'https://movie.douban.com/subject/{}/celebrities'
@@ -49,17 +50,17 @@ class Top250MoviesSpider(scrapy.Spider):
         info_div = intro_div.xpath('.//div[@id="info"]')
         # 导演
         director_url = info_div.xpath('./span[1]//a/@href').extract()
-        director_name = info_div.xpath('./span[1]//a/text()').extract()
+        director_name = replace_dot(info_div.xpath('./span[1]//a/text()').extract())
         director_url = [response.urljoin(url) for url in director_url]
         item['director'] = dict(zip(director_name, director_url))
         # 编剧
         scriptwriter_url = info_div.xpath('./span[2]//a/@href').extract()
-        scriptwriter_name = info_div.xpath('./span[2]//a/text()').extract()
+        scriptwriter_name = replace_dot(info_div.xpath('./span[2]//a/text()').extract())
         scriptwriter_url = [response.urljoin(url) for url in scriptwriter_url]
         item['scriptwriter'] = dict(zip(scriptwriter_name, scriptwriter_url))
         # 主演
         actor_url = info_div.xpath('./span[3]//a[not(@title)]/@href').extract()
-        actor_name = info_div.xpath('./span[3]//a[not(@title)]/text()').extract()
+        actor_name = replace_dot(info_div.xpath('./span[3]//a[not(@title)]/text()').extract())
         actor_url = [response.urljoin(url) for url in actor_url]
         item['actor'] = dict(zip(actor_name, actor_url))
         # 剧情
@@ -69,7 +70,8 @@ class Top250MoviesSpider(scrapy.Spider):
         texts = [t.strip() for t in texts if t.strip() not in ('', ' ', '/')]
         item['made_in'] = texts[0]
         item['language'] = texts[1]
-        item['another_names'] = texts[2]
+        if len(texts) == 3:
+            item['another_names'] = texts[2]
         # 上映日期
         item['release_date'] = '/'.join(info_div.xpath('.//span[@property="v:initialReleaseDate"]/@content').extract())
         # 片长
@@ -93,7 +95,7 @@ class Top250MoviesSpider(scrapy.Spider):
             response.xpath('//div[@id="link-report"]//span[@class="all hidden"]').xpath('string(.)').extract()).strip()
         item['related_info'] = summary + ' ' + all_info
         # 喜欢该影片的人也喜欢
-        recomm_names = response.xpath('//div[@id="recommendations"]//dd/a/text()').extract()
+        recomm_names = replace_dot(response.xpath('//div[@id="recommendations"]//dd/a/text()').extract())
         recomm_urls = response.xpath('//div[@id="recommendations"]//dd/a/@href').extract()
         item['recommendations'] = dict(zip(recomm_names, recomm_urls))
         yield item

@@ -47,9 +47,9 @@ RANDOM_DELAY = True
 
 # Enable or disable spider middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
-#SPIDER_MIDDLEWARES = {
-#    'douban.middlewares.DoubanSpiderMiddleware': 543,
-#}
+SPIDER_MIDDLEWARES = {
+   'douban.middlewares.DoubanSpiderMiddleware': 543,
+}
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
@@ -112,3 +112,13 @@ USER_AGENT_LIST = [
 
 # phantomjs所在目录
 PHANTOMJS_DRIVER = "/Users/pattywgm/Personal/phantomjs-2.1.1-macosx/bin/phantomjs"
+
+# Mail k-v
+MAIL_HOST = 'smtp.exmail.qq.com'
+MAIL_FROM = 'crawler@ruyi.ai'
+MAIL_USER = 'crawler@ruyi.ai'
+MAIL_PASS = 'Shu12349'
+MAIL_PORT = 25
+MAIL_SSL = False
+
+MAIL_TO = ['wugm@ruyi.ai', ]

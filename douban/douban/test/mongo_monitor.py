@@ -7,9 +7,10 @@
 @time: 17/10/16  下午5:14
 @desc: 监控MongoDB中各个collection的入库情况,连续7天未发生入库行为引发报警机制
 """
+import sys
 import json
 from datetime import datetime, timedelta
-
+import ConfigParser
 import pymongo
 
 from send_mail import send_email
@@ -22,13 +23,14 @@ class MongoMonitor(object):
         self.last_date = (datetime.today() - timedelta(days=6)).isoformat()[:10] + 'T00:00:00'
         self.errors = dict()
 
-    def check_insert_stat(self, db_name):
+    def check_insert_stat(self, db_name, filtered):
         """
         检查各个collection的入库情况
         :return:
         """
         db = self.client[db_name]
         colls = db.collection_names()
+        colls = set(colls).difference(set(filtered))
         db_error = list()
         for coll in colls:
             db[coll].distinct('meta_updated')
@@ -41,25 +43,16 @@ class MongoMonitor(object):
     def __del__(self):
         self.client.close()
 
-    def insert_many(self):
-        with open('/Users/pattywgm/howbuy_profile_20171014full.json','r') as f:
-            docs = list()
-            db = self.client['price']
-            coll = db['howbuy_profile']
-            for line in f.readlines():
-                data = json.loads(line.strip())
-                docs.append(data)
-                if len(docs) % 20 == 0:
-                    coll.insert_many(docs)
-                    docs = list()
-            if len(docs) > 0:
-                coll.insert_many(docs)
 
-
-
-if __name__ == "__main__":
-    monitor = MongoMonitor()
-    monitor.insert_many()
+# if __name__ == "__main__":
+#     # cfg_file = sys.argv[1]
+#     conf = ConfigParser.ConfigParser()
+#     conf.read('/Users/pattywgm/Desktop/海知智能/collections.cfg')
+#     monitor = MongoMonitor()
+#     # monitor.insert_many()
 #     for db in ['perimit', 'permit', 'cpdaily', 'jediDB', 'price']:
-#         monitor.check_insert_stat(db)
-    # send_email(json.dumps(monitor.errors))
+#         filtered = list()
+#         if conf.has_section(db):
+#             filtered = conf.items(db)[0][1].replace('[', '').replace(']', '').replace(' ', '').split(',')
+#         monitor.check_insert_stat(db, filtered)
+#     send_email(json.dumps(monitor.errors))

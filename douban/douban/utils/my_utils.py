@@ -29,3 +29,12 @@ def load_obj(file_path):
     """
     with open(file_path, 'r') as f:
         return pickle.load(f)
+
+
+def replace_dot(fileds):
+    """
+    替换'.',mongo不允许key值中含有'.', 如 E.T.In是非法的
+    :param fileds:
+    :return:
+    """
+    return [filed.replace('.', '\u002E') for filed in fileds]
