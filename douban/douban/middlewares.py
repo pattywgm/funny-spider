@@ -5,9 +5,12 @@
 # See documentation in:
 # http://doc.scrapy.org/en/latest/topics/spider-middleware.html
 import json
+
 from scrapy import signals
 from scrapy.mail import MailSender
+
 from settings import MAIL_TO
+from utils.my_utils import dump_obj
 
 
 class DoubanSpiderMiddleware(object):
@@ -19,7 +22,9 @@ class DoubanSpiderMiddleware(object):
     def from_crawler(cls, crawler):
         # This method is used by Scrapy to create your spiders.
         s = cls()
-        crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
+        # crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
+        crawler.signals.connect(s.spider_closed, signal=signals.spider_closed)
+        crawler.signals.connect(s.item_scraped, signal=signals.item_scraped)
         crawler.signals.connect(s.spider_error, signal=signals.spider_error)
         s.mail = MailSender.from_settings(crawler.settings)
         return s
@@ -58,7 +63,6 @@ class DoubanSpiderMiddleware(object):
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
-        self.mail.send(MAIL_TO, 'Scrapy Opened from wugm', 'open...')
 
     def spider_error(self, failure, response, spider):
         """
@@ -76,3 +80,8 @@ class DoubanSpiderMiddleware(object):
                    'error_from': 'Spider error, probably occurred in item parse functions'}
         self.mail.send(MAIL_TO, 'Scrapy Error Alarm from wugm', json.dumps(content))
 
+    def item_scraped(self, item, response, spider):
+        spider.new_done.append(item['url'])
+
+    def spider_closed(self, spider, reason):
+        dump_obj('./records/{}_done.pkl'.format(spider.name), spider.new_done)

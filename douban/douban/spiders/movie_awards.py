@@ -6,8 +6,11 @@
 @file: movie_awards.py
 @time: 17/10/19  下午10:35
 @desc: 电影获奖数据抓取
+        28items/每分钟 被ban
 """
 import re
+from copy import deepcopy
+from os.path import exists
 
 import scrapy
 
@@ -22,22 +25,26 @@ class MovieAwards(scrapy.Spider):
     name = 'movie_awards'
     meta_version = _META_VERSION
 
-    def __init__(self, urls):
-        self.urls = urls
+    def __init__(self):
+        """
 
-    @classmethod
-    def from_crawler(cls, crawler):
-        # This method is used by Scrapy to create your spiders.
-        urls = load_obj('./records/urls.pkl')
-        s = cls(urls)
-        return s
+        :param urls:
+        :param done: 已经抓取完成的,用于断点续爬
+        :return:
+        """
+        self.urls = load_obj('./records/urls.pkl')
+        self.done = list()
+        if exists('./records/{}_done.pkl'.format(self.name)):
+            self.done = load_obj('./records/{}_done.pkl'.format(self.name))
+        self.new_done = deepcopy(self.done)
 
     def start_requests(self):
         req = list()
         for url in self.urls:
             movie_code = re.findall('\d+', url)[0]
             award_url = _AWARDS.format(movie_code)
-            req.append(scrapy.Request(award_url, callback=self.parse, meta={'movie_code': movie_code}))
+            if award_url not in self.done:
+                req.append(scrapy.Request(award_url, callback=self.parse, meta={'movie_code': movie_code}))
         return req
 
     def parse(self, response):
