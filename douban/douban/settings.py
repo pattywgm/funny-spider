@@ -115,10 +115,10 @@ PHANTOMJS_DRIVER = "/Users/pattywgm/Personal/phantomjs-2.1.1-macosx/bin/phantomj
 
 # Mail k-v
 MAIL_HOST = 'smtp.exmail.qq.com'
-MAIL_FROM = 'crawler@ruyi.ai'
-MAIL_USER = 'crawler@ruyi.ai'
-MAIL_PASS = 'Shu12349'
+MAIL_FROM = '11829211@qq.com'
+MAIL_USER = '11829211@qq.com'
+MAIL_PASS = '111222'
 MAIL_PORT = 25
 MAIL_SSL = False
 
-MAIL_TO = ['wugm@ruyi.ai', ]
+MAIL_TO = ['25698733@qq.com', ]

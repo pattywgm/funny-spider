@@ -37,22 +37,21 @@ class MongoMonitor(object):
             result = db[coll].count({'meta_updated': {'$gte': self.last_date}})
             if result == 0:
                 # slack alarm
-                db_error.append("{}-{}".format(db_name, coll))
+                db_error.append(coll)
         self.errors.update({db_name: db_error})
 
     def __del__(self):
         self.client.close()
 
 
-# if __name__ == "__main__":
-#     # cfg_file = sys.argv[1]
-#     conf = ConfigParser.ConfigParser()
-#     conf.read('/Users/pattywgm/Desktop/海知智能/collections.cfg')
-#     monitor = MongoMonitor()
-#     # monitor.insert_many()
-#     for db in ['perimit', 'permit', 'cpdaily', 'jediDB', 'price']:
-#         filtered = list()
-#         if conf.has_section(db):
-#             filtered = conf.items(db)[0][1].replace('[', '').replace(']', '').replace(' ', '').split(',')
-#         monitor.check_insert_stat(db, filtered)
-#     send_email(json.dumps(monitor.errors))
+if __name__ == "__main__":
+    cfg_file = sys.argv[1]
+    conf = ConfigParser.ConfigParser()
+    conf.read(cfg_file)
+    monitor = MongoMonitor()
+    for db in ['perimit', 'permit', 'cpdaily', 'jediDB', 'price']:
+        filtered = list()
+        if conf.has_section(db):
+            filtered = conf.items(db)[0][1].replace('[', '').replace(']', '').replace(' ', '').split(',')
+        monitor.check_insert_stat(db, filtered)
+    send_email(json.dumps(monitor.errors)+"\r\n 表名与数据源关系参照: http://gitlab.****")
