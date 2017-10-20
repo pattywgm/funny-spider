@@ -8,7 +8,7 @@
 from datetime import datetime
 
 import pymongo
-
+from items import AwardsItem, MovieItem
 time_now = datetime.strftime(datetime.now(), '%Y%m%d')
 
 
@@ -29,5 +29,8 @@ class DoubanPipeline(object):
         self.mongo_db = MongoDBObj()
 
     def process_item(self, item, spider):
-        self.mongo_db.insert('movies', dict(item))
+        if isinstance(item, MovieItem):
+            self.mongo_db.insert('movies', dict(item))
+        if isinstance(item, AwardsItem):
+            self.mongo_db.insert('movie_awards', dict(item))
         return item

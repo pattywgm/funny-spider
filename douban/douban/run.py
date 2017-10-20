@@ -14,4 +14,6 @@ from scrapy.cmdline import execute
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-execute(("scrapy crawl top250_movies").split())
+# execute(("scrapy crawl top250_movies").split())
+
+execute(("scrapy crawl movie_awards").split())

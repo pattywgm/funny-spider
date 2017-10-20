@@ -28,3 +28,9 @@ class MovieItem(scrapy.Item):
     related_info = scrapy.Field()
     recommendations = scrapy.Field()
 
+
+class AwardsItem(scrapy.Item):
+    movie_code = scrapy.Field()
+    url = scrapy.Field()
+    awards = scrapy.Field()
+
