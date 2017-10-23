@@ -7,6 +7,8 @@
 @time: 17/10/16  下午8:35
 @desc: 
 """
+import time
+import random
 try:
     import cPickle as pickle
 except ImportError, e:
@@ -38,3 +40,7 @@ def replace_dot(fileds):
     :return:
     """
     return [filed.replace('.', '\u002E') for filed in fileds]
+
+
+def random_delay():
+    time.sleep(random.choice([1, 3, 5, 7]))

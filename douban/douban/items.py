@@ -34,3 +34,16 @@ class AwardsItem(scrapy.Item):
     url = scrapy.Field()
     awards = scrapy.Field()
 
+
+class CelebrityItem(scrapy.Item):
+    celebrity_code = scrapy.Field()
+    url = scrapy.Field()
+    name = scrapy.Field()
+    picture = scrapy.Field()
+    base_infos = scrapy.Field()
+    introduction = scrapy.Field()
+    images = scrapy.Field()
+    awards = scrapy.Field()
+    works = scrapy.Field()
+    partners = scrapy.Field()
+
