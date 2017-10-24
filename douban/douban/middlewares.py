@@ -81,7 +81,8 @@ class DoubanSpiderMiddleware(object):
         self.mail.send(MAIL_TO, 'Scrapy Error Alarm from wugm', json.dumps(content))
 
     def item_scraped(self, item, response, spider):
-        spider.new_done.append(item['url'])
+        for v in item['partners'].values():
+            spider.r.lpush(spider.redis_key, v)
 
     def spider_closed(self, spider, reason):
         dump_obj('./records/{}_done.pkl'.format(spider.name), spider.new_done)

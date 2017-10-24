@@ -122,3 +122,30 @@ MAIL_PORT = 25
 MAIL_SSL = False
 
 MAIL_TO = ['25698733@qq.com', ]
+
+
+# 测试环境
+REDIS_URL = None
+REDIS_HOST = '127.0.0.1'
+REDIS_PORT = 6379
+REDIS_PASSWORD = None
+
+# scrapy_redis
+SCHEDULER = 'scrapy_redis.scheduler.Scheduler'
+SCHEDULER_PERSIST = True
+# SCHEDULER_QUEUE_CLASS = 'scrapy_redis.queue.SpiderPriorityQueue'
+# SCHEDULER_QUEUE_CLASS = 'scrapy_redis.queue.SpiderSimpleQueue'
+# Ensure all spiders share same duplicates filter through redis.
+DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
+
+# # 起始URL的key值
+# REDIS_START_URLS_KEY = "njxz_spider:start_urls"
+# CONCURRENT_REQUESTS = 1
+# 是否开启滤重debug
+DUPEFILTER_DEBUG = '1'
+# 去重队列的信息
+FILTER_URL = None
+FILTER_HOST = '127.0.0.1'
+FILTER_PORT = 6379
+FILTER_DB = 0
+# REDIS_QUEUE_NAME = 'OneName'   # 如果不设置或者设置为None，则使用默认的，每个spider使用不同的去重队列和种子队列。如果设置了，则不同spider共用去重队列和种子队列

@@ -7,12 +7,15 @@
 @time: 17/10/16  下午8:35
 @desc: 
 """
-import time
 import random
+import time
+
 try:
     import cPickle as pickle
 except ImportError, e:
     import pickle
+import redis
+from settings import REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
 
 
 def dump_obj(file_path, obj):
@@ -43,4 +46,16 @@ def replace_dot(fileds):
 
 
 def random_delay():
+    """
+    随机延时
+    :return:
+    """
     time.sleep(random.choice([1, 3, 5, 7]))
+
+
+def get_redis_conn():
+    """
+    获取Redis连接对象
+    :return:
+    """
+    return redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0, password=REDIS_PASSWORD)
